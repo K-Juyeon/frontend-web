@@ -1,3 +1,6 @@
+var info = [];
+var subject = [];
+
 function exec(btnClass, btnId) {
     var checkId = checkBtn(btnId);
     if (btnClass == "add") {
@@ -58,7 +61,7 @@ function save(tableId) {
     var range = table.rows.length - 3;
     var sumTotal = 0;
     var key = 0;
-
+    sorting(tableId);
     for (var i = 3; i < (range + 3); i++) {
         sumTotal = 0;
         for (var j = 5; j < 9; j++) {
@@ -133,6 +136,25 @@ function save(tableId) {
     table.childNodes[2].childNodes[range + 3].childNodes[14].textContent = totalGrade; //전체평균
     getGrade = checkGrade(totalGrade);
     table.childNodes[2].childNodes[range + 3].childNodes[16].innerHTML = getGrade; //성적
+}
+
+function sorting(tableId) {
+    var table = document.getElementById(tableId);
+    var range = table.rows.length - 3;
+
+    for (var i = 3; i < (range + 3); i++) {
+        subject = [];
+        for (var j = 1; j < 9; j++) {
+            if (j == 1 || j == 2) {
+                var selectValue = table.childNodes[2].childNodes[3].childNodes[j].childNodes[0].options[table.childNodes[2].childNodes[3].childNodes[j].childNodes[0].selectedIndex].value
+                subject.push(selectValue);
+            } else if (i == 3) {
+                var subjectName = table.childNodes[2].childNodes[3].childNodes[j].textContent;
+                subject.push(subjectName);
+            }
+        }
+    }
+    console.log(subject);
 }
 
 function delRow(btnId, tableId) {
