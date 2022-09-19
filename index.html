@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="widtd=device-widtd, initial-scale=1.0">
+    <title>Front-End개발실습</title>
+    <script src="./script.js"></script>
+    <link rel="stylesheet" href="./style.css"/>
+</head>
+<body>
+    <table class='head' id="first">
+        <tr>
+            <th id="textHead" colspan="2">1학년</th>
+            <th id="btnHead" colspan="10">
+                <input name="add" id="1" type='button' value='추가' onclick='exec(this.name, this.id)' />
+                <input name="save" id="1" type='button' value='저장' onclick='exec(this.name, this.id)' />
+                <input name="delete" id="1" type='button' value='삭제' onclick='exec(this.name, this.id)' />
+            </th>
+        </tr>
+        <tbody>
+            <tr id="tableHead" style="height: 20px;">
+                <td style="width: 20px;"></td>
+                <td style="width: 50px;">이수</td>
+                <td style="width: 50px;">필수</td>
+                <td style="width: 150px;">과목명</td>
+                <td style="width: 50px;">학점</td>
+                <td style="width: 90px;">출석점수</td>
+                <td style="width: 90px;">과제점수</td>
+                <td style="width: 90px;">중간고사</td>
+                <td style="width: 90px;">기말고사</td>
+                <td style="width: 50px;">총점</td>
+                <td style="width: 50px;">평균</td>
+                <td style="width: 50px;">성적</td>
+            </tr>
+            <tr id="tableFooter"><td colspan="4">합계</td>
+                <td id="credit1"></td>
+                <td id="attend1"></td>
+                <td id="assignment1"></td>
+                <td id="mid1"></td>
+                <td id="final1"></td>
+                <td id="sum1"></td>
+                <td id="avg1"></td>
+                <td id="grade1"></td>
+            </tr>
+        </tbody>
+    </table>
+    <p></p>
+
+    <table class='head' id="second">
+        <tr>
+            <th id="textHead" colspan="2">2학년</th>
+            <th id="btnHead" colspan="10">
+                <input name="add" id="2" type='button' value='추가' onclick='exec(this.name, this.id)' />
+                <input name="save" id="2" type='button' value='저장' onclick='exec(this.name, this.id)' />
+                <input name="delete" id="2" type='button' value='삭제' onclick='exec(this.name, this.id)' />
+            </th>
+        </tr>
+        <tbody>
+            <tr id="tableHead" style="height: 20px;">
+                <td style="width: 20px;"></td>
+                <td style="width: 50px;">이수</td>
+                <td style="width: 50px;">필수</td>
+                <td style="width: 150px;">과목명</td>
+                <td style="width: 50px;">학점</td>
+                <td style="width: 90px;">출석점수</td>
+                <td style="width: 90px;">과제점수</td>
+                <td style="width: 90px;">중간고사</td>
+                <td style="width: 90px;">기말고사</td>
+                <td style="width: 50px;">총점</td>
+                <td style="width: 50px;">평균</td>
+                <td style="width: 50px;">성적</td>
+            </tr>
+            <tr id="tableFooter"><td colspan="4">합계</td>
+                <td id="credit2"></td>
+                <td id="attend2"></td>
+                <td id="assignment2"></td>
+                <td id="mid2"></td>
+                <td id="final2"></td>
+                <td id="sum2"></td>
+                <td id="avg2"></td>
+                <td id="grade2"></td>
+            </tr>
+        </tbody>
+    </table>
+    <p></p>
+
+    <table class='head' id="third">
+        <tr>
+            <th id="textHead" colspan="2">3학년</th>
+            <th id="btnHead" colspan="10">
+                <input name="add" id="3" type='button' value='추가' onclick='exec(this.name, this.id)' />
+                <input name="save" id="3" type='button' value='저장' onclick='exec(this.name, this.id)' />
+                <input name="delete" id="3" type='button' value='삭제' onclick='exec(this.name, this.id)' />
+            </th>
+        </tr>
+        <tbody>
+            <tr id="tableHead" style="height: 20px;">
+                <td style="width: 20px;"></td>
+                <td style="width: 50px;">이수</td>
+                <td style="width: 50px;">필수</td>
+                <td style="width: 150px;">과목명</td>
+                <td style="width: 50px;">학점</td>
+                <td style="width: 90px;">출석점수</td>
+                <td style="width: 90px;">과제점수</td>
+                <td style="width: 90px;">중간고사</td>
+                <td style="width: 90px;">기말고사</td>
+                <td style="width: 50px;">총점</td>
+                <td style="width: 50px;">평균</td>
+                <td style="width: 50px;">성적</td>
+            </tr>
+            <tr id="tableFooter"><td colspan="4">합계</td>
+                <td id="credit3"></td>
+                <td id="attend3"></td>
+                <td id="assignment3"></td>
+                <td id="mid3"></td>
+                <td id="final3"></td>
+                <td id="sum3"></td>
+                <td id="avg3"></td>
+                <td id="grade3"></td>
+            </tr>
+        </tbody>
+    </table>
+    <p></p>
+    <p></p>
+    <p></p>
+    <p></p>
+    <div>참고사항</div>
+    <ol>
+        <li>점수 책정 방법을 우리학교의 기준을 참고하였습니다.</li>
+        <ul>
+            <li>각 과목마다 항목별 점수의 비중을 다르게 지정할 수 있기 때문에 한 항목의 최대점수를 40점으로 정하였습니다.</li>
+        </ul>
+        <li>가급적 저장버튼을 클릭하면 sort를 했으면 좋겠네요. 이수, 필수, 과목 순으로(필요치 않다고 판단되면 하지 않아도 됩니다)</li>
+    </ol>
+</body>
+</html>
