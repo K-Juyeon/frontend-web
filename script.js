@@ -23,10 +23,10 @@ function addRow(btnId, tableId) {
     cell.innerHTML = "<td><input type='checkbox' name='chkbox" + check + "'></td>"
 
     cell = row.insertCell();
-    cell.innerHTML = "<td height=20px><select id='major'><option value='1'>전공</option><option value='2'>교양</option></select></td>";
+    cell.innerHTML = "<td height=20px><select id='major'><option value='1'>교양</option><option value='2'>전공</option></select></td>";
 
     cell = row.insertCell();
-    cell.innerHTML = "<td><select id='essential'><option value='1'>필수</option><option value='2'>선택</option></select></td>";
+    cell.innerHTML = "<td><select id='essential'><option value='1'>선택</option><option value='2'>필수</option></select></td>";
 
     cell = row.insertCell();
     cell.innerHTML = "<td><div contentEditable=true style='text-align:left'></div></td>";
@@ -61,7 +61,85 @@ function save(tableId) {
     var range = table.rows.length - 3;
     var sumTotal = 0;
     var key = 0;
-    sorting(tableId);
+
+    /*
+        각 입력값이 조건을 만족하는지 검사
+    */
+    for (var i = 3; i < (range + 3); i++) {
+        for (var j = 5; j < 9; j++) {
+            var tagValue = table.childNodes[2].childNodes[i].childNodes[j].textContent;
+            var flag = isNumeric(tagValue);
+            if (flag == 2) {
+                alert("!!올바른 숫자를 입력해주세요!!");
+                return;
+            } else if (flag == 1) {
+                tagValue = 0;
+            } else if (flag == 0) {
+                tagValue = parseInt(tagValue);
+                if (tagValue < 0 || tagValue > 40) {
+                    alert("점수의 범위는 0~40점 사이입니다.");
+                    return;
+                }
+            }
+            sumTotal += parseInt(tagValue);
+            if (sumTotal > 100) {
+                alert("점수의 합은 100점을 초과할 수 없습니다.");
+                return;
+            }
+        }
+    }
+
+    /*
+        각 과목의 정보를 배열로 저장
+    */
+    for (var i = 3; i < (range + 3); i++) {
+        subject = [];
+        for (var j = 1; j < 9; j++) {
+            if (j == 1 || j == 2) {
+                var selectValue = table.childNodes[2].childNodes[i].childNodes[j].childNodes[0].options[table.childNodes[2].childNodes[i].childNodes[j].childNodes[0].selectedIndex].text;
+                subject.push(selectValue);
+            } else if (j == 3) {
+                var subjectName = table.childNodes[2].childNodes[i].childNodes[j].textContent;
+                subject.push(subjectName);
+            } else if (j == 4) {
+                var subjectCount = table.childNodes[2].childNodes[i].childNodes[j].textContent;
+                subject.push(subjectCount);
+            } else {
+                var tagValue = table.childNodes[2].childNodes[i].childNodes[j].textContent;
+                subject.push(parseInt(tagValue));
+            }
+        }
+        info.push(subject);
+    }
+
+    /*
+        배열 정렬
+    */
+    var sortInfo = info.sort();
+
+    /*
+        테이블에 정렬한대로 세팅
+    */
+    var column = sortInfo.length;
+    var row = sortInfo[0].length;
+
+    for (var i = 1; i <= column; i++) {
+        for (var j = 1; j <= row; j++) {
+            if (j == 1 || j == 2) {
+                for (var k = 0; k < 3; k++) {
+                    if (table.childNodes[2].childNodes[i + 2].childNodes[j].childNodes[0].options[k].text == sortInfo[i - 1][j - 1]) {
+                        table.childNodes[2].childNodes[i + 2].childNodes[j].childNodes[0].options[k].selected = true;
+                        break;
+                    }
+                }
+            } else if (j == 3) {
+                table.childNodes[2].childNodes[i + 2].childNodes[j].textContent = sortInfo[i - 1][j - 1];
+            } else {
+                table.childNodes[2].childNodes[i + 2].childNodes[j].textContent = String(sortInfo[i - 1][j - 1]);
+            }
+        }
+    }
+
     for (var i = 3; i < (range + 3); i++) {
         sumTotal = 0;
         for (var j = 5; j < 9; j++) {
@@ -78,7 +156,6 @@ function save(tableId) {
             } else if (flag == 0) {
                 tagValue = parseInt(tagValue);
                 if (tagValue < 0 || tagValue > 40) {
-                    console.log(tagValue);
                     alert("점수의 범위는 0~40점 사이입니다.");
                     return;
                 }
@@ -99,6 +176,7 @@ function save(tableId) {
         */
         var subjectGrade = checkGrade(sumTotal);
         table.childNodes[2].childNodes[i].childNodes[11].innerHTML = subjectGrade;
+        info.push(subject);
     }
 
     /*
@@ -108,21 +186,21 @@ function save(tableId) {
         var gradeSum = 0;
         for (var i = 3; i < (range + 3); i++) {
             var tagSum = table.childNodes[2].childNodes[i].childNodes[j + 3].textContent;
-            var flag = isNumeric(tagSum);
-            if (j != 6) {
-                if (flag == 2) {
-                    alert("!!올바른 숫자를 입력해주세요!!");
-                    return;
-                } else if (flag == 1) {
-                    tagSum = 0;
-                } else if (flag == 0) {
-                    tagSum = parseInt(tagSum);
-                    if (tagSum < 0 || tagSum > 40) {
-                        alert("점수의 범위는 0~40점 사이입니다.");
-                        return;
-                    }
-                }
-            }
+            // var flag = isNumeric(tagSum);
+            // if (j != 6) {
+            //     if (flag == 2) {
+            //         alert("!!올바른 숫자를 입력해주세요!!");
+            //         return;
+            //     } else if (flag == 1) {
+            //         tagSum = 0;
+            //     } else if (flag == 0) {
+            //         tagSum = parseInt(tagSum);
+            //         if (tagSum < 0 || tagSum > 40) {
+            //             alert("점수의 범위는 0~40점 사이입니다.");
+            //             return;
+            //         }
+            //     }
+            // }
             gradeSum += parseInt(tagSum);
         }
         table.childNodes[2].childNodes[range + 3].childNodes[j * 2].textContent = gradeSum;
@@ -136,25 +214,9 @@ function save(tableId) {
     table.childNodes[2].childNodes[range + 3].childNodes[14].textContent = totalGrade; //전체평균
     getGrade = checkGrade(totalGrade);
     table.childNodes[2].childNodes[range + 3].childNodes[16].innerHTML = getGrade; //성적
-}
-
-function sorting(tableId) {
-    var table = document.getElementById(tableId);
-    var range = table.rows.length - 3;
-
-    for (var i = 3; i < (range + 3); i++) {
-        subject = [];
-        for (var j = 1; j < 9; j++) {
-            if (j == 1 || j == 2) {
-                var selectValue = table.childNodes[2].childNodes[3].childNodes[j].childNodes[0].options[table.childNodes[2].childNodes[3].childNodes[j].childNodes[0].selectedIndex].value
-                subject.push(selectValue);
-            } else if (i == 3) {
-                var subjectName = table.childNodes[2].childNodes[3].childNodes[j].textContent;
-                subject.push(subjectName);
-            }
-        }
-    }
-    console.log(subject);
+    
+    info = [];
+    subject = [];
 }
 
 function delRow(btnId, tableId) {
