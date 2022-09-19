@@ -66,6 +66,7 @@ function save(tableId) {
         각 입력값이 조건을 만족하는지 검사
     */
     for (var i = 3; i < (range + 3); i++) {
+        sumTotal = 0;
         for (var j = 5; j < 9; j++) {
             var tagValue = table.childNodes[2].childNodes[i].childNodes[j].textContent;
             var flag = isNumeric(tagValue);
@@ -106,6 +107,9 @@ function save(tableId) {
                 subject.push(subjectCount);
             } else {
                 var tagValue = table.childNodes[2].childNodes[i].childNodes[j].textContent;
+                if (tagValue == "") {
+                    tagValue = 0;
+                }
                 subject.push(parseInt(tagValue));
             }
         }
@@ -148,23 +152,10 @@ function save(tableId) {
             */
             var tagValue = table.childNodes[2].childNodes[i].childNodes[j].textContent;
             var flag = isNumeric(tagValue);
-            if (flag == 2) {
-                alert("!!올바른 숫자를 입력해주세요!!");
-                return;
-            } else if (flag == 1) {
-                tagValue = 0;
-            } else if (flag == 0) {
-                tagValue = parseInt(tagValue);
-                if (tagValue < 0 || tagValue > 40) {
-                    alert("점수의 범위는 0~40점 사이입니다.");
-                    return;
-                }
-            }
+            console.log(flag);
+            if (flag == 1 || flag == 2) tagValue = 0;
+            else tagValue = parseInt(tagValue);
             sumTotal += parseInt(tagValue);
-            if (sumTotal > 100) {
-                alert("점수의 합은 100점을 초과할 수 없습니다.");
-                return;
-            }
         }
         if (sumTotal != 0) {
             table.childNodes[2].childNodes[i].childNodes[9].textContent = sumTotal;
@@ -186,21 +177,6 @@ function save(tableId) {
         var gradeSum = 0;
         for (var i = 3; i < (range + 3); i++) {
             var tagSum = table.childNodes[2].childNodes[i].childNodes[j + 3].textContent;
-            // var flag = isNumeric(tagSum);
-            // if (j != 6) {
-            //     if (flag == 2) {
-            //         alert("!!올바른 숫자를 입력해주세요!!");
-            //         return;
-            //     } else if (flag == 1) {
-            //         tagSum = 0;
-            //     } else if (flag == 0) {
-            //         tagSum = parseInt(tagSum);
-            //         if (tagSum < 0 || tagSum > 40) {
-            //             alert("점수의 범위는 0~40점 사이입니다.");
-            //             return;
-            //         }
-            //     }
-            // }
             gradeSum += parseInt(tagSum);
         }
         table.childNodes[2].childNodes[range + 3].childNodes[j * 2].textContent = gradeSum;
@@ -209,6 +185,7 @@ function save(tableId) {
     /*
     전체 평균 및 성적 구하기
     */
+    var totalGrade;
     var checking = table.childNodes[2].childNodes[range + 3].childNodes[12].textContent;
     var totalGrade = (parseInt(checking) / key).toFixed(2);
     table.childNodes[2].childNodes[range + 3].childNodes[14].textContent = totalGrade; //전체평균
@@ -247,16 +224,20 @@ function checkGrade(grade) {
     점수 체크하여 성적 매기기
     */
     var getGrade = "";
-    if (grade >= 95) getGrade = "A+";
-    else if (grade >= 90) getGrade = "A0";
-    else if (grade >= 85) getGrade = "B+";
-    else if (grade >= 80) getGrade = "B0";
-    else if (grade >= 75) getGrade = "C+";
-    else if (grade >= 70) getGrade = "C0";
-    else if (grade >= 65) getGrade = "D+";
-    else if (grade >= 60) getGrade = "D0";
-    else if (grade >= 1) getGrade = "<div style='color:red;'>F</div>";
-    else getGrade = "P";
+    if (isNaN(grade)) {
+        getGrade = "-";
+    } else {
+        if (grade >= 95) getGrade = "A+";
+        else if (grade >= 90) getGrade = "A0";
+        else if (grade >= 85) getGrade = "B+";
+        else if (grade >= 80) getGrade = "B0";
+        else if (grade >= 75) getGrade = "C+";
+        else if (grade >= 70) getGrade = "C0";
+        else if (grade >= 65) getGrade = "D+";
+        else if (grade >= 60) getGrade = "D0";
+        else if (grade >= 1) getGrade = "<div style='color:red;'>F</div>";
+        else getGrade = "P";
+    }
     return getGrade;
 }
 
