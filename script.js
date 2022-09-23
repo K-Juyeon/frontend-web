@@ -128,7 +128,6 @@ function save(tableId) {
     /*
         테이블에 정렬한대로 세팅 후 평균값에 따라 성적 매기기
     */
-
     try {
         var column = sortInfo.length;
         var row = sortInfo[0].length;   
@@ -148,7 +147,8 @@ function save(tableId) {
                     table.childNodes[2].childNodes[i + 2].childNodes[j].childNodes[0].textContent = sortInfo[i - 1][j - 1];
                 } else {
                     if (sortInfo[i - 1][8] == 0) {
-                        continue;
+                        var subjectGrade = checkGrade(sortInfo[i - 1][8]);
+                        table.childNodes[2].childNodes[i + 2].childNodes[11].innerHTML = subjectGrade;
                     } else {
                         table.childNodes[2].childNodes[i + 2].childNodes[j].childNodes[0].textContent = String(sortInfo[i - 1][j - 1]);
                         var subjectGrade = checkGrade(sortInfo[i - 1][8]);
