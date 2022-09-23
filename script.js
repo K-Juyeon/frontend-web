@@ -74,12 +74,17 @@ function save(tableId) {
                 subject.push(selectValue);
             } else if (j == 3) { //과목명
                 var subjectName = table.childNodes[2].childNodes[i].childNodes[j].textContent;
+                var flag = isNumeric(subjectName);
+                if (flag == 1) {
+                    alert("과목명을 입력해주세요");
+                    return;
+                }
                 subject.push(subjectName);
             } else if (j == 4) { //학점
                 var subjectCount = table.childNodes[2].childNodes[i].childNodes[j].textContent;
                 var flag = isNumeric(subjectCount);
                 if (flag == 2 || flag == 1) {
-                    alert("올바른 숫자를 입력해주세요");
+                    alert("올바른 학점을 입력해주세요");
                     return;
                 } else if (flag == 0) {
                     subjectCount = parseInt(subjectCount);
@@ -123,32 +128,37 @@ function save(tableId) {
     /*
         테이블에 정렬한대로 세팅 후 평균값에 따라 성적 매기기
     */
-    var column = sortInfo.length;
-    var row = sortInfo[0].length;
 
-    for (var i = 1; i <= column; i++) {
-        for (var j = 1; j <= row; j++) {
-            if (j == 1 || j == 2) {
-                for (var k = 0; k < 3; k++) {
-                    if (table.childNodes[2].childNodes[i + 2].childNodes[j].childNodes[0].options[k].text == sortInfo[i - 1][j - 1]) {
-                        table.childNodes[2].childNodes[i + 2].childNodes[j].childNodes[0].options[k].selected = true;
-                        break;
+    try {
+        var column = sortInfo.length;
+        var row = sortInfo[0].length;   
+    } catch(e) {
+        
+    } finally {
+        for (var i = 1; i <= column; i++) {
+            for (var j = 1; j <= row; j++) {
+                if (j == 1 || j == 2) {
+                    for (var k = 0; k < 3; k++) {
+                        if (table.childNodes[2].childNodes[i + 2].childNodes[j].childNodes[0].options[k].text == sortInfo[i - 1][j - 1]) {
+                            table.childNodes[2].childNodes[i + 2].childNodes[j].childNodes[0].options[k].selected = true;
+                            break;
+                        }
                     }
-                }
-            } else if (j == 3) {
-                table.childNodes[2].childNodes[i + 2].childNodes[j].childNodes[0].textContent = sortInfo[i - 1][j - 1];
-            } else {
-                if (sortInfo[i - 1][8] == 0) {
-                    continue;
+                } else if (j == 3) {
+                    table.childNodes[2].childNodes[i + 2].childNodes[j].childNodes[0].textContent = sortInfo[i - 1][j - 1];
                 } else {
-                    table.childNodes[2].childNodes[i + 2].childNodes[j].childNodes[0].textContent = String(sortInfo[i - 1][j - 1]);
-                    var subjectGrade = checkGrade(sortInfo[i - 1][8]);
-                    table.childNodes[2].childNodes[i + 2].childNodes[11].innerHTML = subjectGrade;
+                    if (sortInfo[i - 1][8] == 0) {
+                        continue;
+                    } else {
+                        table.childNodes[2].childNodes[i + 2].childNodes[j].childNodes[0].textContent = String(sortInfo[i - 1][j - 1]);
+                        var subjectGrade = checkGrade(sortInfo[i - 1][8]);
+                        table.childNodes[2].childNodes[i + 2].childNodes[11].innerHTML = subjectGrade;
+                    }
                 }
             }
         }
-
     }
+
 
     /*
     점수별 합계 더하기
@@ -157,6 +167,9 @@ function save(tableId) {
         var gradeSum = 0;
         for (var i = 3; i < (range + 3); i++) {
             var tagSum = table.childNodes[2].childNodes[i].childNodes[j + 3].textContent;
+            if (tagSum == "") {
+                tagSum = 0;
+            }
             gradeSum += parseInt(tagSum);
         }
         table.childNodes[2].childNodes[range + 3].childNodes[j * 2].textContent = gradeSum;
@@ -167,10 +180,14 @@ function save(tableId) {
     */
     var checking = table.childNodes[2].childNodes[range + 3].childNodes[12].textContent;
     var totalGrade = (parseInt(checking) / key).toFixed(2);
-    table.childNodes[2].childNodes[range + 3].childNodes[14].textContent = totalGrade; //전체평균
-    getGrade = checkGrade(totalGrade);
-    table.childNodes[2].childNodes[range + 3].childNodes[16].innerHTML = getGrade; //성적
-
+    if (!isNaN(totalGrade)) { //보통의 경우
+        table.childNodes[2].childNodes[range + 3].childNodes[14].textContent = totalGrade; //전체평균
+        getGrade = checkGrade(totalGrade);
+        table.childNodes[2].childNodes[range + 3].childNodes[16].innerHTML = getGrade; //성적
+    } else { //P만 있을 경우
+        table.childNodes[2].childNodes[range + 3].childNodes[14].textContent = "-"; //전체평균
+        table.childNodes[2].childNodes[range + 3].childNodes[16].innerHTML = "-"; //성적
+    }
     info = [];
     subject = [];
 }
