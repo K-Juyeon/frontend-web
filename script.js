@@ -63,56 +63,55 @@ function save(tableId) {
     var key = 0;
 
     /*
-        각 입력값이 조건을 만족하는지 검사
+        각 입력값이 조건을 만족하는지 검사하고 과목의 정보를 배열로 저장
     */
     for (var i = 3; i < (range + 3); i++) {
         sumTotal = 0;
-        for (var j = 5; j < 9; j++) {
-            var tagValue = table.childNodes[2].childNodes[i].childNodes[j].textContent;
-            var flag = isNumeric(tagValue);
-            if (flag == 2) {
-                alert("!!올바른 숫자를 입력해주세요!!");
-                return;
-            } else if (flag == 1) {
-                tagValue = 0;
-            } else if (flag == 0) {
-                tagValue = parseInt(tagValue);
-                if (tagValue < 0 || tagValue > 40) {
-                    alert("점수의 범위는 0~40점 사이입니다.");
-                    return;
-                }
-            }
-            sumTotal += parseInt(tagValue);
-            if (sumTotal > 100) {
-                alert("점수의 합은 100점을 초과할 수 없습니다.");
-                return;
-            }
-        }
-    }
-
-    /*
-        각 과목의 정보를 배열로 저장
-    */
-    for (var i = 3; i < (range + 3); i++) {
         subject = [];
         for (var j = 1; j < 9; j++) {
-            if (j == 1 || j == 2) {
+            if (j == 1 || j == 2) { //셀렉트 박스
                 var selectValue = table.childNodes[2].childNodes[i].childNodes[j].childNodes[0].options[table.childNodes[2].childNodes[i].childNodes[j].childNodes[0].selectedIndex].text;
                 subject.push(selectValue);
-            } else if (j == 3) {
+            } else if (j == 3) { //과목명
                 var subjectName = table.childNodes[2].childNodes[i].childNodes[j].textContent;
                 subject.push(subjectName);
-            } else if (j == 4) {
+            } else if (j == 4) { //학점
                 var subjectCount = table.childNodes[2].childNodes[i].childNodes[j].textContent;
+                var flag = isNumeric(subjectCount);
+                if (flag == 2 || flag == 1) {
+                    alert("올바른 숫자를 입력해주세요");
+                    return;
+                } else if (flag == 0) {
+                    subjectCount = parseInt(subjectCount);
+                }
                 subject.push(subjectCount);
-            } else {
+            } else { //각 점수
                 var tagValue = table.childNodes[2].childNodes[i].childNodes[j].textContent;
-                if (tagValue == "") {
+                var flag = isNumeric(tagValue);
+                if (flag == 2) {
+                    alert("올바른 숫자를 입력해주세요");
+                    return;
+                } else if (flag == 1) {
                     tagValue = 0;
+                } else if (flag == 0) {
+                    tagValue = parseInt(tagValue);
+                    if (tagValue < 0 || tagValue > 40) {
+                        alert("점수의 범위는 0~40점 사이입니다.");
+                        return;
+                    }
+                }
+                if (sumTotal > 100) {
+                    alert("점수의 합은 100점을 초과할 수 없습니다.");
+                    return;
                 }
                 subject.push(parseInt(tagValue));
+                sumTotal += parseInt(tagValue);
             }
         }
+        if (sumTotal != 0) {
+            key += 1;
+        }
+        subject.push(sumTotal);
         info.push(subject);
     }
 
@@ -122,7 +121,7 @@ function save(tableId) {
     var sortInfo = info.sort();
 
     /*
-        테이블에 정렬한대로 세팅
+        테이블에 정렬한대로 세팅 후 평균값에 따라 성적 매기기
     */
     var column = sortInfo.length;
     var row = sortInfo[0].length;
@@ -137,37 +136,18 @@ function save(tableId) {
                     }
                 }
             } else if (j == 3) {
-                table.childNodes[2].childNodes[i + 2].childNodes[j].textContent = sortInfo[i - 1][j - 1];
+                table.childNodes[2].childNodes[i + 2].childNodes[j].childNodes[0].textContent = sortInfo[i - 1][j - 1];
             } else {
-                table.childNodes[2].childNodes[i + 2].childNodes[j].textContent = String(sortInfo[i - 1][j - 1]);
+                if (sortInfo[i - 1][8] == 0) {
+                    continue;
+                } else {
+                    table.childNodes[2].childNodes[i + 2].childNodes[j].childNodes[0].textContent = String(sortInfo[i - 1][j - 1]);
+                    var subjectGrade = checkGrade(sortInfo[i - 1][8]);
+                    table.childNodes[2].childNodes[i + 2].childNodes[11].innerHTML = subjectGrade;
+                }
             }
         }
-    }
 
-    for (var i = 3; i < (range + 3); i++) {
-        sumTotal = 0;
-        for (var j = 5; j < 9; j++) {
-            /*
-                한 과목의 총점 더하기
-            */
-            var tagValue = table.childNodes[2].childNodes[i].childNodes[j].textContent;
-            var flag = isNumeric(tagValue);
-            console.log(flag);
-            if (flag == 1 || flag == 2) tagValue = 0;
-            else tagValue = parseInt(tagValue);
-            sumTotal += parseInt(tagValue);
-        }
-        if (sumTotal != 0) {
-            table.childNodes[2].childNodes[i].childNodes[9].textContent = sumTotal;
-            key += 1;
-        }
-
-        /*
-        성적 구하기(A+, A0 등)
-        */
-        var subjectGrade = checkGrade(sumTotal);
-        table.childNodes[2].childNodes[i].childNodes[11].innerHTML = subjectGrade;
-        info.push(subject);
     }
 
     /*
@@ -185,13 +165,12 @@ function save(tableId) {
     /*
     전체 평균 및 성적 구하기
     */
-    var totalGrade;
     var checking = table.childNodes[2].childNodes[range + 3].childNodes[12].textContent;
     var totalGrade = (parseInt(checking) / key).toFixed(2);
     table.childNodes[2].childNodes[range + 3].childNodes[14].textContent = totalGrade; //전체평균
     getGrade = checkGrade(totalGrade);
     table.childNodes[2].childNodes[range + 3].childNodes[16].innerHTML = getGrade; //성적
-    
+
     info = [];
     subject = [];
 }
@@ -224,20 +203,16 @@ function checkGrade(grade) {
     점수 체크하여 성적 매기기
     */
     var getGrade = "";
-    if (isNaN(grade)) {
-        getGrade = "-";
-    } else {
-        if (grade >= 95) getGrade = "A+";
-        else if (grade >= 90) getGrade = "A0";
-        else if (grade >= 85) getGrade = "B+";
-        else if (grade >= 80) getGrade = "B0";
-        else if (grade >= 75) getGrade = "C+";
-        else if (grade >= 70) getGrade = "C0";
-        else if (grade >= 65) getGrade = "D+";
-        else if (grade >= 60) getGrade = "D0";
-        else if (grade >= 1) getGrade = "<div style='color:red;'>F</div>";
-        else getGrade = "P";
-    }
+    if (grade >= 95) getGrade = "A+";
+    else if (grade >= 90) getGrade = "A0";
+    else if (grade >= 85) getGrade = "B+";
+    else if (grade >= 80) getGrade = "B0";
+    else if (grade >= 75) getGrade = "C+";
+    else if (grade >= 70) getGrade = "C0";
+    else if (grade >= 65) getGrade = "D+";
+    else if (grade >= 60) getGrade = "D0";
+    else if (grade >= 1) getGrade = "<div style='color:red;'>F</div>";
+    else getGrade = "P";
     return getGrade;
 }
 
