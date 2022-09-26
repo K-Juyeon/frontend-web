@@ -6,7 +6,7 @@ function exec(btnClass, btnId) {
     if (btnClass == "add") {
         addRow(btnId, checkId);
     } else if (btnClass == "save") {
-        save(checkId);
+        save(btnId, checkId);
     } else if (btnClass == "delete") {
         delRow(btnId, checkId);
     }
@@ -56,12 +56,17 @@ function addRow(btnId, tableId) {
     cell.innerHTML = "<td><div style='width:90%; height:100%; border:none; text-align:center;'></div></td>";
 }
 
-function save(tableId) {
-    var table = document.getElementById(tableId);
-    var range = table.rows.length - 3;
-    var sumTotal = 0;
-    var key = 0;
+function save(btnId, tableId) {
+    var checkingId = btnId;
+    console.log(checkingId);
+    try {
+        var table = document.getElementById(tableId);
+        var range = table.rows.length - 3;
+        var sumTotal = 0;
+        var key = 0;
+    } catch(e) {
 
+    }
     /*
         각 입력값이 조건을 만족하는지 검사하고 과목의 정보를 배열로 저장
     */
@@ -130,10 +135,8 @@ function save(tableId) {
     */
     try {
         var column = sortInfo.length;
-        var row = sortInfo[0].length;   
-    } catch(e) {
-        
-    } finally {
+        var row = sortInfo[0].length;
+
         for (var i = 1; i <= column; i++) {
             for (var j = 1; j <= row; j++) {
                 if (j == 1 || j == 2) {
@@ -143,10 +146,11 @@ function save(tableId) {
                             break;
                         }
                     }
-                } else if (j == 3) {
+                } else if (j == 3 || j == 4) {
                     table.childNodes[2].childNodes[i + 2].childNodes[j].childNodes[0].textContent = sortInfo[i - 1][j - 1];
                 } else {
                     if (sortInfo[i - 1][8] == 0) {
+                        table.childNodes[2].childNodes[i + 2].childNodes[j].childNodes[0].textContent = "";
                         var subjectGrade = checkGrade(sortInfo[i - 1][8]);
                         table.childNodes[2].childNodes[i + 2].childNodes[11].innerHTML = subjectGrade;
                     } else {
@@ -157,22 +161,32 @@ function save(tableId) {
                 }
             }
         }
-    }
 
-
-    /*
-    점수별 합계 더하기
-    */
-    for (var j = 1; j < 7; j++) {
-        var gradeSum = 0;
-        for (var i = 3; i < (range + 3); i++) {
-            var tagSum = table.childNodes[2].childNodes[i].childNodes[j + 3].textContent;
-            if (tagSum == "") {
-                tagSum = 0;
+        /*
+            점수별 합계 더하기
+        */
+        for (var j = 1; j < 7; j++) {
+            var gradeSum = 0;
+            for (var i = 3; i < (range + 3); i++) {
+                var tagSum = table.childNodes[2].childNodes[i].childNodes[j + 3].textContent;
+                if (tagSum == "") {
+                    tagSum = 0;
+                }
+                gradeSum += parseInt(tagSum);
             }
-            gradeSum += parseInt(tagSum);
+            if (gradeSum == 0 && key == 0) continue;
+            else table.childNodes[2].childNodes[range + 3].childNodes[j * 2].textContent = gradeSum;
         }
-        table.childNodes[2].childNodes[range + 3].childNodes[j * 2].textContent = gradeSum;
+    } catch (e) {
+        var empty = ['credit', 'attend', 'assignment', 'mid', 'final', 'sum', 'avg', 'grade'];
+        for (var i = 0; i < empty.length; i++) {
+            console.log(checkingId);
+            var emptyId = empty[i] + checkingId;
+            console.log(emptyId);
+            // document.getElementById(emptyId).innerText = "aaaa";
+        }
+    } finally {
+
     }
 
     /*
@@ -185,8 +199,8 @@ function save(tableId) {
         getGrade = checkGrade(totalGrade);
         table.childNodes[2].childNodes[range + 3].childNodes[16].innerHTML = getGrade; //성적
     } else { //P만 있을 경우
-        table.childNodes[2].childNodes[range + 3].childNodes[14].textContent = "-"; //전체평균
-        table.childNodes[2].childNodes[range + 3].childNodes[16].innerHTML = "-"; //성적
+        table.childNodes[2].childNodes[range + 3].childNodes[14].textContent = ""; //전체평균
+        table.childNodes[2].childNodes[range + 3].childNodes[16].innerHTML = ""; //성적
     }
     info = [];
     subject = [];
