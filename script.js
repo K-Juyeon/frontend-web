@@ -57,8 +57,6 @@ function addRow(btnId, tableId) {
 }
 
 function save(btnId, tableId) {
-    var checkingId = btnId;
-    console.log(checkingId);
     try {
         var table = document.getElementById(tableId);
         var range = table.rows.length - 3;
@@ -136,7 +134,6 @@ function save(btnId, tableId) {
     try {
         var column = sortInfo.length;
         var row = sortInfo[0].length;
-
         for (var i = 1; i <= column; i++) {
             for (var j = 1; j <= row; j++) {
                 if (j == 1 || j == 2) {
@@ -180,10 +177,9 @@ function save(btnId, tableId) {
     } catch (e) {
         var empty = ['credit', 'attend', 'assignment', 'mid', 'final', 'sum', 'avg', 'grade'];
         for (var i = 0; i < empty.length; i++) {
-            console.log(checkingId);
-            var emptyId = empty[i] + checkingId;
-            console.log(emptyId);
-            // document.getElementById(emptyId).innerText = "aaaa";
+            console.log(btnId);
+            var emptyId = empty[i] + btnId;
+            document.getElementById(emptyId).innerText = "";
         }
     } finally {
 
@@ -224,7 +220,7 @@ function delRow(btnId, tableId) {
         } catch (e) {
             continue;
         } finally {
-            save(tableId);
+            save(btnId, tableId);
         }
     }
 }
