@@ -1,5 +1,6 @@
 var info = [];
 var subject = [];
+var subjectOverlap = [];
 
 function exec(btnClass, btnId) {
     var checkId = checkBtn(btnId);
@@ -32,7 +33,7 @@ function addRow(btnId, tableId) {
     cell.innerHTML = "<td><div contentEditable=true style='text-align:left'></div></td>";
 
     cell = row.insertCell();
-    cell.innerHTML = "<td><div contentEditable=true style='text-align:center'></div></td>";
+    cell.innerHTML = "<td><select id='count'><option value='선택'>선택</option><option value='1'>1</option><option value='2'>2</option><option value='3'>3</option></td>";
 
     cell = row.insertCell();
     cell.innerHTML = "<td><div contentEditable=true style='text-align:center'></div></td>";
@@ -71,6 +72,7 @@ function save(btnId, tableId) {
     for (var i = 3; i < (range + 3); i++) {
         sumTotal = 0;
         subject = [];
+        subjectOverlap = [];
         for (var j = 1; j < 9; j++) {
             if (j == 1 || j == 2) { //셀렉트 박스
                 var selectValue = table.childNodes[2].childNodes[i].childNodes[j].childNodes[0].options[table.childNodes[2].childNodes[i].childNodes[j].childNodes[0].selectedIndex].text;
@@ -79,15 +81,28 @@ function save(btnId, tableId) {
                 var subjectName = table.childNodes[2].childNodes[i].childNodes[j].textContent;
                 var flag = isNumeric(subjectName);
                 if (flag == 1) {
-                    alert("과목명을 입력해주세요");
+                    alert("과목명을 입력해주세요.");
                     return;
                 }
+                if (subjectOverlap.length == 0) {
+                    subjectOverlap.push(subjectName);
+                } else {
+                    for (var k = 0; k < subjectOverlap.length; k++) {
+                        if (subjectOverlap[k] == subjectName) {
+                            subjectOverlap = [];
+                            alert("중복된 과목은 입력할 수 없습니다.");
+                            return;
+                        }
+                    }
+                }
+                subjectOverlap.push(subjectName);
                 subject.push(subjectName);
-            } else if (j == 4) { //학점
-                var subjectCount = table.childNodes[2].childNodes[i].childNodes[j].textContent;
+            } else if (j == 4) { //학점, select box
+                // var subjectCount = table.childNodes[2].childNodes[i].childNodes[j].textContent; //셀렉트박스가 아닐때
+                var subjectCount = table.childNodes[2].childNodes[i].childNodes[j].childNodes[0].options[table.childNodes[2].childNodes[i].childNodes[j].childNodes[0].selectedIndex].text;
                 var flag = isNumeric(subjectCount);
                 if (flag == 2 || flag == 1) {
-                    alert("올바른 학점을 입력해주세요");
+                    alert("올바른 학점을 선택해주세요");
                     return;
                 } else if (flag == 0) {
                     subjectCount = parseInt(subjectCount);
@@ -108,13 +123,13 @@ function save(btnId, tableId) {
                         return;
                     }
                 }
-                if (sumTotal > 100) {
-                    alert("점수의 합은 100점을 초과할 수 없습니다.");
-                    return;
-                }
                 subject.push(parseInt(tagValue));
                 sumTotal += parseInt(tagValue);
             }
+        }
+        if (sumTotal > 100) {
+            alert("점수의 합은 100점을 초과할 수 없습니다.");
+            return;
         }
         if (sumTotal != 0) {
             key += 1;
@@ -122,6 +137,7 @@ function save(btnId, tableId) {
         subject.push(sumTotal);
         info.push(subject);
     }
+    console.log(info);
 
     /*
         배열 정렬
@@ -134,6 +150,10 @@ function save(btnId, tableId) {
     try {
         var column = sortInfo.length;
         var row = sortInfo[0].length;
+    } catch (e) {
+        
+    }
+    try {
         for (var i = 1; i <= column; i++) {
             for (var j = 1; j <= row; j++) {
                 if (j == 1 || j == 2) {
@@ -175,14 +195,16 @@ function save(btnId, tableId) {
             else table.childNodes[2].childNodes[range + 3].childNodes[j * 2].textContent = gradeSum;
         }
     } catch (e) {
+        console.log(e);
         var empty = ['credit', 'attend', 'assignment', 'mid', 'final', 'sum', 'avg', 'grade'];
         for (var i = 0; i < empty.length; i++) {
-            console.log(btnId);
             var emptyId = empty[i] + btnId;
-            document.getElementById(emptyId).innerText = "";
+            document.getElementById(emptyId).innerHTML = "";
         }
     } finally {
-
+        info = [];
+        subject = [];
+        subjectOverlap = [];
     }
 
     /*
@@ -198,8 +220,7 @@ function save(btnId, tableId) {
         table.childNodes[2].childNodes[range + 3].childNodes[14].textContent = ""; //전체평균
         table.childNodes[2].childNodes[range + 3].childNodes[16].innerHTML = ""; //성적
     }
-    info = [];
-    subject = [];
+    
 }
 
 function delRow(btnId, tableId) {
@@ -239,7 +260,7 @@ function checkGrade(grade) {
     else if (grade >= 65) getGrade = "D+";
     else if (grade >= 60) getGrade = "D0";
     else if (grade >= 1) getGrade = "<div style='color:red;'>F</div>";
-    else getGrade = "P";
+    else getGrade = "<div contentEditable=True>P</div>";
     return getGrade;
 }
 
