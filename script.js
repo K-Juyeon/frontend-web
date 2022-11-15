@@ -33,7 +33,7 @@ function addRow(btnId, tableId) {
     cell.innerHTML = "<td><div contentEditable=true style='text-align:left'></div></td>";
 
     cell = row.insertCell();
-    cell.innerHTML = "<td><select id='count'><option value='선택'>선택</option><option value='1'>1</option><option value='2'>2</option><option value='3'>3</option></td>";
+    cell.innerHTML = "<td><div contentEditable=true style='text-align:center'></div></td>";
 
     cell = row.insertCell();
     cell.innerHTML = "<td><div contentEditable=true style='text-align:center'></div></td>";
@@ -98,8 +98,8 @@ function save(btnId, tableId) {
                 subjectOverlap.push(subjectName);
                 subject.push(subjectName);
             } else if (j == 4) { //학점, select box
-                // var subjectCount = table.childNodes[2].childNodes[i].childNodes[j].textContent; //셀렉트박스가 아닐때
-                var subjectCount = table.childNodes[2].childNodes[i].childNodes[j].childNodes[0].options[table.childNodes[2].childNodes[i].childNodes[j].childNodes[0].selectedIndex].text;
+                var subjectCount = table.childNodes[2].childNodes[i].childNodes[j].textContent; //셀렉트박스가 아닐때
+                // var subjectCount = table.childNodes[2].childNodes[i].childNodes[j].childNodes[0].options[table.childNodes[2].childNodes[i].childNodes[j].childNodes[0].selectedIndex].text;
                 var flag = isNumeric(subjectCount);
                 if (flag == 2 || flag == 1) {
                     alert("올바른 학점을 선택해주세요");
@@ -137,7 +137,7 @@ function save(btnId, tableId) {
         subject.push(sumTotal);
         info.push(subject);
     }
-    console.log(info);
+    // console.log(info);
 
     /*
         배열 정렬
@@ -164,8 +164,8 @@ function save(btnId, tableId) {
                         }
                     }
                 } else if (j == 3 || j == 4) {
-                    table.childNodes[2].childNodes[i + 2].childNodes[j].childNodes[0].textContent = sortInfo[i - 1][j - 1];
-                } else {
+                        table.childNodes[2].childNodes[i + 2].childNodes[j].childNodes[0].textContent = sortInfo[i - 1][j - 1];
+                }  else {
                     if (sortInfo[i - 1][8] == 0) {
                         table.childNodes[2].childNodes[i + 2].childNodes[j].childNodes[0].textContent = "";
                         var subjectGrade = checkGrade(sortInfo[i - 1][8]);
@@ -194,13 +194,15 @@ function save(btnId, tableId) {
             if (gradeSum == 0 && key == 0) continue;
             else table.childNodes[2].childNodes[range + 3].childNodes[j * 2].textContent = gradeSum;
         }
+        if (range == 0) {
+            var empty = ['credit', 'attend', 'assignment', 'mid', 'final', 'sum', 'avg', 'grade'];
+            for (var i = 0; i < empty.length; i++) {
+                var emptyId = empty[i] + btnId;
+                document.getElementById(emptyId).innerHTML = "";
+            }
+        }
     } catch (e) {
         console.log(e);
-        var empty = ['credit', 'attend', 'assignment', 'mid', 'final', 'sum', 'avg', 'grade'];
-        for (var i = 0; i < empty.length; i++) {
-            var emptyId = empty[i] + btnId;
-            document.getElementById(emptyId).innerHTML = "";
-        }
     } finally {
         info = [];
         subject = [];
