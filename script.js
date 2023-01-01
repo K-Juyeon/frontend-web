@@ -137,7 +137,6 @@ function save(btnId, tableId) {
         subject.push(sumTotal);
         info.push(subject);
     }
-    // console.log(info);
 
     /*
         배열 정렬
